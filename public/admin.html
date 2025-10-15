@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard – Life of an Old Farm Girl</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    section { border: 1px solid #ddd; padding: 20px; margin: 20px auto; max-width: 1000px; border-radius: 8px; }
+    h2 { border-bottom: 2px solid #f28500; padding-bottom: 5px; color:#f28500; }
+    .grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+    .grid-item { width: 220px; text-align: center; border: 1px solid #ddd; padding: 10px; border-radius: 6px; }
+    .grid-item img, .grid-item video, .grid-item iframe { width: 100%; border-radius: 4px; }
+    nav { text-align: center; margin: 10px 0 0; }
+  </style>
+</head>
+<body>
+  <nav>
+    <button onclick="logout()">Logout</button>
+    <a href="/">Back to Site</a>
+  </nav>
+
+  <h1 style="text-align:center;color:#f28500;">🌾 Admin Dashboard</h1>
+
+  <section>
+    <h2>Upload Video</h2>
+    <form id="videoUploadForm">
+      <input type="file" id="videoFile" accept="video/*">
+      <button type="submit">Upload Local Video</button>
+    </form>
+
+    <h3>or Add YouTube Video</h3>
+    <form id="youtubeForm">
+      <input type="text" id="youtubeUrl" placeholder="YouTube video URL">
+      <button type="submit">Add YouTube Video</button>
+    </form>
+
+    <div id="videoGrid" class="grid"></div>
+  </section>
+
+  <section>
+    <h2>Upload Photo</h2>
+    <form id="photoUploadForm">
+      <input type="file" id="photoFile" accept="image/*">
+      <button type="submit">Upload Photo</button>
+    </form>
+    <div id="photoGrid" class="grid"></div>
+  </section>
+
+  <section>
+    <h2>Upload Sponsor Logo</h2>
+    <form id="sponsorUploadForm">
+      <input type="file" id="sponsorFile" accept="image/*">
+      <button type="submit">Upload Sponsor Logo</button>
+    </form>
+    <div id="sponsorGrid" class="grid"></div>
+  </section>
+
+  <section>
+    <h2>Analytics</h2>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 1000px; margin: 0 auto;">
+      <div>
+        <h3>Page Views (total)</h3>
+        <canvas id="viewsChart"></canvas>
+      </div>
+      <div>
+        <h3>Uploads by Type (total)</h3>
+        <canvas id="uploadsChart"></canvas>
+      </div>
+      <div>
+        <h3>Video Interactions</h3>
+        <canvas id="videoChart"></canvas>
+      </div>
+      <div>
+        <h3>Monthly Trend</h3>
+        <canvas id="monthlyChart"></canvas>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:16px;">
+      <button onclick="resetAnalytics()">Reset Analytics</button>
+    </div>
+  </section>
+
+  <script>
+    async function checkAuth() {
+      const res = await fetch("/session");
+      const json = await res.json();
+      if (!json.loggedIn) window.location.href = "/login.html";
+    }
+    checkAuth();
+
+    async function logout() {
+      await fetch("/logout", { method: "POST" });
+      window.location.href = "/login.html";
+    }
+
+    async function loadAll() {
+      const [videos, photos, sponsors] = await Promise.all([
+        fetch("/data/videos").then(r => r.json()).catch(() => []),
+        fetch("/data/photos").then(r => r.json()).catch(() => []),
+        fetch("/data/sponsors").then(r => r.json()).catch(() => [])
+      ]);
+      renderGrid("videoGrid", videos, "videos");
+      renderGrid("photoGrid", photos, "photos");
+      renderGrid("sponsorGrid", sponsors, "sponsors");
+    }
+
+    function renderGrid(id, items, type) {
+      const el = document.getElementById(id);
+      if (!items || items.length === 0) {
+        el.innerHTML = "<p>No items uploaded yet.</p>";
+        return;
+      }
+      el.innerHTML = items.map(item => {
+        let content = "";
+        if (type === "videos") {
+          content = item.youtubeId
+            ? `<iframe src="https://www.youtube.com/embed/${item.youtubeId}" frameborder="0" allowfullscreen></iframe>`
+            : `<video controls src="${item.url}"></video>`;
+        } else {
+          content = `<img src="${item.url}" alt="${item.name || type}">`;
+        }
+        return `
+          <div class="grid-item">
+            ${content}
+            <p style="word-break:break-word">${item.name || ""}</p>
+            <button onclick="deleteItem('${type}', '${item.id}')">Delete</button>
+          </div>`;
+      }).join("");
+    }
+
+    async function deleteItem(type, id) {
+      if (!confirm("Are you sure you want to delete this item?")) return;
+      await fetch(`/delete/${type}/${id}`, { method: "DELETE" });
+      loadAll();
+    }
+
+    document.getElementById("videoUploadForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const file = document.getElementById("videoFile").files[0];
+      if (!file) return alert("Select a video file first!");
+      const form = new FormData();
+      form.append("file", file);
+      await fetch("/upload/videos", { method: "POST", body: form });
+      loadAll();
+    });
+
+    document.getElementById("youtubeForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const url = document.getElementById("youtubeUrl").value;
+      if (!url) return alert("Enter a YouTube URL!");
+      await fetch("/upload/youtube", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url })
+      });
+      document.getElementById("youtubeUrl").value = "";
+      loadAll();
+    });
+
+    document.getElementById("photoUploadForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const file = document.getElementById("photoFile").files[0];
+      if (!file) return alert("Select a photo!");
+      const form = new FormData();
+      form.append("file", file);
+      await fetch("/upload/photos", { method: "POST", body: form });
+      loadAll();
+    });
+
+    document.getElementById("sponsorUploadForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const file = document.getElementById("sponsorFile").files[0];
+      if (!file) return alert("Select a sponsor logo!");
+      const form = new FormData();
+      form.append("file", file);
+      await fetch("/upload/sponsors", { method: "POST", body: form });
+      loadAll();
+    });
+
+    async function fetchAnalytics() {
+      const res = await fetch("/analytics/summary");
+      const json = await res.json();
+      if (!json.success) return null;
+      return json.analytics;
+    }
+    async function renderAnalytics() {
+      const a = await fetchAnalytics();
+      if (!a) return;
+      // Page Views
+      const pvLabels = Object.keys(a.pageViews || {});
+      const pvData = Object.values(a.pageViews || {});
+      new Chart(document.getElementById("viewsChart"), {
+        type: "bar",
+        data: { labels: pvLabels, datasets: [{ label: "Views", data: pvData }] },
+        options: { responsive: true, plugins: { legend: { display: false } } }
+      });
+      // Uploads by Type
+      const upLabels = Object.keys(a.uploads || {}).filter(k => k !== "total");
+      const upData = upLabels.map(k => a.uploads[k]);
+      new Chart(document.getElementById("uploadsChart"), {
+        type: "bar",
+        data: { labels: upLabels, datasets: [{ label: "Uploads", data: upData }] },
+        options: { responsive: true, plugins: { legend: { display: false } } }
+      });
+      // Video Interactions
+      const vLabels = Object.keys(a.videoInteractions || {});
+      const vData = vLabels.map(k => a.videoInteractions[k]);
+      new Chart(document.getElementById("videoChart"), {
+        type: "bar",
+        data: { labels: vLabels, datasets: [{ label: "Interactions", data: vData }] },
+        options: { responsive: true, plugins: { legend: { display: false } } }
+      });
+      // Monthly trend
+      const mLabels = Object.keys(a.monthly || {}).sort();
+      const mViews = mLabels.map(k => (a.monthly[k]?.views || 0));
+      const mUploads = mLabels.map(k => (a.monthly[k]?.uploads || 0));
+      const mVideo = mLabels.map(k => (a.monthly[k]?.video || 0));
+      new Chart(document.getElementById("monthlyChart"), {
+        type: "line",
+        data: {
+          labels: mLabels,
+          datasets: [
+            { label: "Views", data: mViews },
+            { label: "Uploads", data: mUploads },
+            { label: "Video Interactions", data: mVideo }
+          ]
+        },
+        options: { responsive: true }
+      });
+    }
+    loadAll();
+    renderAnalytics();
+  </script>
+</body>
+</html>

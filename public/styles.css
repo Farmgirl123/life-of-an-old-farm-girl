@@ -1,0 +1,140 @@
+body {
+  font-family: "Georgia", serif;
+  background-color: #ffffff;
+  color: #000000;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  text-align: center;
+  padding: 20px;
+  border-bottom: 2px solid #f4a300;
+}
+
+.logo {
+  max-height: 120px;
+  margin-bottom: 10px;
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+nav ul li {
+  display: inline;
+  margin: 0 15px;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: #000;
+  font-weight: bold;
+}
+
+nav ul li a:hover {
+  color: #f28500;
+}
+
+.section {
+  padding: 40px 10%;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+}
+
+h1, h2 {
+  color: #f28500; /* Orange accent */
+}
+
+input[type="file"] {
+  margin: 10px 0 20px;
+}
+
+.gallery-grid,
+.video-grid,
+.sponsor-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.gallery-item img,
+.sponsor-item img {
+  max-width: 220px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.video-item {
+  display: inline-block;
+  text-align: center;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 60%;
+  margin: 0 auto;
+}
+
+form input, form textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+form button, button {
+  background-color: #f28500;
+  color: white;
+  border: none;
+  padding: 10px 25px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+form button:hover, button:hover {
+  background-color: #d67300;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  background-color: #fafafa;
+  border-top: 1px solid #eee;
+  font-size: 0.9em;
+}
+
+iframe {
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+
+/* Dropzones */
+.dropzone {
+  border: 2px dashed #f28500;
+  padding: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+.dropzone.dragover {
+  background: #fff4e6;
+}
+
+/* Progress bars */
+#video-progress div, #photo-progress div, #sponsor-progress div {
+  height: 8px;
+  background: #f28500;
+  width: 0%;
+  border-radius: 4px;
+  transition: width 0.2s;
+}
+.progress-wrapper { width: 100%; background: #eee; border-radius: 4px; margin: 6px 0; }
+.progress-label { font-size: 0.85em; color: #444; text-align: left; }

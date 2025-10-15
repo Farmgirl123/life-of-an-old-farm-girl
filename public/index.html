@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Life of an Old Farm Girl</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- Optional GA4 (replace G-XXXXXXXXXX) -->
+  <!--
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script>
+  -->
+</head>
+<body>
+  <header>
+    <img src="assets/logo.png" alt="Life of an Old Farm Girl Logo" class="logo">
+    <nav>
+      <ul>
+        <li><a href="#videos">Videos</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#sponsors">Sponsors</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li id="authLinks"><a href="/login.html">Login</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section id="welcome" class="section">
+      <h1>Welcome to Life of an Old Farm Girl 🌾</h1>
+      <p>Sharing the heart, humor, and hard work of country living every week.</p>
+      <div id="mini-stats" style="text-align:center; color:#666; font-size:0.9rem; margin-top:12px;"></div>
+    </section>
+
+    <!-- Weekly Videos -->
+    <section id="videos" class="section">
+      <h2>Weekly Farm Life Videos</h2>
+      <p>Upload your videos or share YouTube links from your latest farm adventures.</p>
+
+      <h3>Upload a Video File</h3>
+      <div id="video-drop" class="dropzone">Drop videos here or click to select</div>
+      <input type="file" id="video-upload" accept="video/*" multiple style="display:none">
+
+      <h3>Or Add a YouTube Link</h3>
+      <form id="youtube-form">
+        <input type="url" id="youtube-link" placeholder="Paste YouTube URL (e.g. https://www.youtube.com/watch?v=...)" required>
+        <button type="submit">Add YouTube Video</button>
+      </form>
+
+      <div id="video-progress"></div>
+      <div id="video-list" class="video-grid"></div>
+    </section>
+
+    <!-- Photo Gallery -->
+    <section id="gallery" class="section">
+      <h2>Farm Life Gallery</h2>
+      <p>Upload your favorite farm photos to share with your followers.</p>
+      <div id="photo-drop" class="dropzone">Drop photos here or click to select</div>
+      <input type="file" id="photo-upload" accept="image/*" multiple style="display:none">
+      <div id="photo-progress"></div>
+      <div id="gallery-grid" class="gallery-grid"></div>
+    </section>
+
+    <!-- Sponsors -->
+    <section id="sponsors" class="section">
+      <h2>Our Sponsors</h2>
+      <p>Thank you to the wonderful brands who support Life of an Old Farm Girl.</p>
+      <div id="sponsor-drop" class="dropzone">Drop logos here or click to select</div>
+      <input type="file" id="sponsor-upload" accept="image/*" multiple style="display:none">
+      <div id="sponsor-progress"></div>
+      <div id="sponsor-logos" class="sponsor-grid"></div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="section">
+      <h2>Contact Me</h2>
+      <p>Interested in collaboration, sponsorship, or just want to say hi?</p>
+      <form id="contact-form">
+        <label for="name">Name:</label>
+        <input type="text" id="name" required>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" required>
+
+        <label for="message">Message:</label>
+        <textarea id="message" rows="4" required></textarea>
+
+        <button type="submit">Send Message</button>
+        <p id="contact-result" style="color:#555;margin-top:8px;"></p>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Life of an Old Farm Girl. All rights reserved.</p>
+  </footer>
+
+  <script src="scripts.js"></script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login – Life of an Old Farm Girl</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header style="text-align:center;">
+    <img src="assets/logo.png" alt="Life of an Old Farm Girl Logo" class="logo">
+  </header>
+  <h1 style="text-align:center;">Admin Login</h1>
+  <form id="loginForm" style="max-width:360px;margin:0 auto;">
+    <label>Username:</label>
+    <input type="text" id="username" required>
+    <label>Password:</label>
+    <input type="password" id="password" required>
+    <button type="submit">Login</button>
+  </form>
+  <p id="message" style="text-align:center;color:#c00;"></p>
+
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      const res = await fetch("/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      });
+      const json = await res.json();
+
+      if (json.success) {
+        window.location.href = "/admin.html";
+      } else {
+        document.getElementById("message").innerText = "Login failed. Try again.";
+      }
+    });
+  </script>
+</body>
+</html>
